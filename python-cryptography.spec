@@ -7,22 +7,25 @@
 
 Name:           python-cryptography
 Version:        1.7.2
-Release:        1%{?dist}
+Release:        1%{?dist}.1
 Summary:        PyCA's cryptography library
 
 Group:          Development/Libraries
 License:        ASL 2.0 or BSD
 URL:            https://cryptography.io/en/latest/
 Source0:        https://files.pythonhosted.org/packages/source/c/cryptography/cryptography-%{version}.tar.gz
-Patch0:         %{name}-1.7.2-setup.patch
-Patch1:         %{name}-1.7.2-test.patch
+Patch0:         0001-Drop-minimal-setuptools-and-pytest-version-fron-setu.patch
+Patch1:         0002-Disable-unsupported-tests.patch
+Patch2:         0003-Refactor-binding-initialization-to-allow-specified-e.patch
+Patch3:         0004-Enlarge-_oid2txt-buffer-to-handle-larger-OIDs-3612.patch
 
-# This package needs four brew build overrides for RHEL in prder to provide
+# This package needs four brew build overrides for RHEL in order to provide
 # build and test dependencies:
 #     python-pretend
 #     python-hypothesis
 #     python-iso8601
 #     python-cryptography-vectors
+# brew tag-build rhel-7.5-temp-override python-pretend-1.0.8-2.el7 python-hypothesis-3.1.3-1.el7 python-iso8601-0.1.11-2.el7 python-cryptography-vectors-1.7.2-1.el7
 
 BuildRequires:  openssl-devel
 
@@ -160,6 +163,10 @@ popd
 
 
 %changelog
+* Mon Aug 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-1.1
+- Ignore errors on OpenSSL's error stack when initializing, fixes RHBZ#1485896
+- Fix parsing of long OIDs, fixes RHBZ#1485898
+
 * Tue Feb 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-1
 - Update to 1.7.2
 - Disable pytest.deprecated_call() tests

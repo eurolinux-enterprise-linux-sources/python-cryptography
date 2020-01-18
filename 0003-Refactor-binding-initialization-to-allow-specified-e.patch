@@ -1,0 +1,77 @@
+From 53e182c619774669ad4e54d3ed9fc03155cd2741 Mon Sep 17 00:00:00 2001
+From: Christian Heimes <cheimes@redhat.com>
+Date: Mon, 13 Feb 2017 21:28:02 -0600
+Subject: [PATCH 3/4] Refactor binding initialization to allow specified errors
+ (#3278)
+
+If pyca/cryptography sees any errors on the error stack during its own
+initialization it immediately raises InternalError and refuses to
+proceed. This was a safety measure since we weren't sure if it was
+safe to proceed. However, reality has intervened and we have to
+bow to the god of pragmatism and just clear the error queue. In
+practice this is safe since we religiously check the error queue
+in operation.
+
+Fixes RHBZ #1402235
+---
+ src/cryptography/hazmat/bindings/openssl/binding.py |  7 ++++++-
+ tests/hazmat/bindings/test_openssl.py               | 16 +++++++++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/src/cryptography/hazmat/bindings/openssl/binding.py b/src/cryptography/hazmat/bindings/openssl/binding.py
+index 39750abc..096faf5c 100644
+--- a/src/cryptography/hazmat/bindings/openssl/binding.py
++++ b/src/cryptography/hazmat/bindings/openssl/binding.py
+@@ -111,7 +111,12 @@ class Binding(object):
+ 
+     @classmethod
+     def _register_osrandom_engine(cls):
+-        _openssl_assert(cls.lib, cls.lib.ERR_peek_error() == 0)
++        # Clear any errors extant in the queue before we start. In many
++        # scenarios other things may be interacting with OpenSSL in the same
++        # process space and it has proven untenable to assume that they will
++        # reliably clear the error queue. Once we clear it here we will
++        # error on any subsequent unexpected item in the stack.
++        cls.lib.ERR_clear_error()
+         cls._osrandom_engine_id = cls.lib.Cryptography_osrandom_engine_id
+         cls._osrandom_engine_name = cls.lib.Cryptography_osrandom_engine_name
+         result = cls.lib.Cryptography_add_osrandom_engine()
+diff --git a/tests/hazmat/bindings/test_openssl.py b/tests/hazmat/bindings/test_openssl.py
+index 3e01717c..854615f1 100644
+--- a/tests/hazmat/bindings/test_openssl.py
++++ b/tests/hazmat/bindings/test_openssl.py
+@@ -8,7 +8,8 @@ import pytest
+ 
+ from cryptography.exceptions import InternalError
+ from cryptography.hazmat.bindings.openssl.binding import (
+-    Binding, _OpenSSLErrorWithText, _openssl_assert, _verify_openssl_version
++    Binding, _OpenSSLErrorWithText, _consume_errors, _openssl_assert,
++    _verify_openssl_version
+ )
+ 
+ 
+@@ -108,8 +109,21 @@ class TestOpenSSL(object):
+             )
+         )]
+ 
++
+     def test_verify_openssl_version(self, monkeypatch):
+         monkeypatch.delenv("CRYPTOGRAPHY_ALLOW_OPENSSL_100", raising=False)
+         with pytest.raises(RuntimeError):
+             # OpenSSL 1.0.0
+             _verify_openssl_version(0x100000F)
++
++    def test_check_startup_errors_are_allowed(self):
++        b = Binding()
++        b.lib.ERR_put_error(
++            b.lib.ERR_LIB_EVP,
++            b.lib.EVP_F_EVP_ENCRYPTFINAL_EX,
++            b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH,
++            b"",
++            -1
++        )
++        b._register_osrandom_engine()
++        assert _consume_errors(b.lib) == []
+-- 
+2.13.5
+

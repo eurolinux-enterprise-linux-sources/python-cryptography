@@ -1,0 +1,42 @@
+From da48b31f7d1e247ed6e00ee09b8c80ca0231e507 Mon Sep 17 00:00:00 2001
+From: Christian Heimes <cheimes@redhat.com>
+Date: Mon, 14 Aug 2017 13:34:17 +0200
+Subject: [PATCH 2/4] Disable unsupported tests
+
+pytest 2.7 does not support context manager for deprecated_call().
+---
+ tests/test_x509.py     | 3 ++-
+ tests/test_x509_ext.py | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tests/test_x509.py b/tests/test_x509.py
+index 966cba6f..fce617cc 100644
+--- a/tests/test_x509.py
++++ b/tests/test_x509.py
+@@ -527,7 +527,8 @@ class TestRSACertificate(object):
+             assert cert.serial == 2
+             assert cert.serial_number == 2
+ 
+-    def test_cert_serial_warning(self, backend):
++    def DISABLED_test_cert_serial_warning(self, backend):
++        # pytest 2.7 does not support context manager for deprecated_call()
+         cert = _load_cert(
+             os.path.join("x509", "PKITS_data", "certs", "GoodCACert.crt"),
+             x509.load_der_x509_certificate,
+diff --git a/tests/test_x509_ext.py b/tests/test_x509_ext.py
+index 7104121d..00cf0a6f 100644
+--- a/tests/test_x509_ext.py
++++ b/tests/test_x509_ext.py
+@@ -3003,7 +3003,8 @@ class TestDistributionPoint(object):
+         with pytest.raises(ValueError):
+             x509.DistributionPoint("data", "notname", None, None)
+ 
+-    def test_relative_name_name_value_deprecated(self):
++    def DISABLED_test_relative_name_name_value_deprecated(self):
++        # pytest 2.7 does not support context manager for deprecated_call()
+         with pytest.deprecated_call():
+             x509.DistributionPoint(
+                 None,
+-- 
+2.13.5
+
