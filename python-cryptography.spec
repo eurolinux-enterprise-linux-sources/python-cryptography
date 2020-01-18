@@ -7,7 +7,7 @@
 
 Name:           python-cryptography
 Version:        1.7.2
-Release:        1%{?dist}.1
+Release:        2%{?dist}
 Summary:        PyCA's cryptography library
 
 Group:          Development/Libraries
@@ -85,6 +85,7 @@ Requires:       python-six >= 1.4.1
 Requires:       python-cffi >= 1.4.1
 Requires:       python-enum34
 Requires:       python-ipaddress
+Requires:       python-setuptools
 
 %description -n python2-cryptography
 cryptography is a package designed to expose cryptographic primitives and
@@ -101,6 +102,7 @@ Requires:       python3-idna >= 2.0
 Requires:       python3-pyasn1 >= 0.1.8
 Requires:       python3-six >= 1.4.1
 Requires:       python3-cffi >= 1.4.1
+Requires:       python3-setuptools
 
 %description -n python3-cryptography
 cryptography is a package designed to expose cryptographic primitives and
@@ -163,9 +165,10 @@ popd
 
 
 %changelog
-* Mon Aug 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-1.1
-- Ignore errors on OpenSSL's error stack when initializing, fixes RHBZ#1485896
-- Fix parsing of long OIDs, fixes RHBZ#1485898
+* Mon Aug 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-2
+- Ignore errors on OpenSSL's error stack when initializing, fixes RHBZ#1402235
+- Add depenency on python-setuptools, fixes RHBZ#1459947
+- Fix parsing of long OIDs, fixes RHBZ#1455755
 
 * Tue Feb 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-1
 - Update to 1.7.2
