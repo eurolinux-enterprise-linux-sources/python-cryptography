@@ -6,47 +6,74 @@
 %endif
 
 Name:           python-cryptography
-Version:        0.8.2
-Release:        1%{?dist}
+Version:        1.3.1
+Release:        3%{?dist}
 Summary:        PyCA's cryptography library
 
 Group:          Development/Libraries
 License:        ASL 2.0 or BSD
 URL:            https://cryptography.io/en/latest/
 Source0:        https://pypi.python.org/packages/source/c/cryptography/cryptography-%{version}.tar.gz
+Patch0:         %{name}-1.3.1-setuptools.patch
 
 BuildRequires:  openssl-devel
-BuildRequires:  python-enum34
 
-BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-BuildRequires:  python-cffi >= 0.8
-BuildRequires:  python-six
-BuildRequires:  python-cryptography-vectors = %{version}
-BuildRequires:  python-pyasn1
-BuildRequires:  python-iso8601
-BuildRequires:  python-pretend
+BuildRequires:  python-devel
 BuildRequires:  pytest
+BuildRequires:  python-setuptools
+BuildRequires:  python-pretend
+BuildRequires:  python-iso8601
+BuildRequires:  python-cryptography-vectors = %{version}
+BuildRequires:  python-pyasn1-modules >= 0.1.8
+BuildRequires:  python-hypothesis
+
+BuildRequires:  python-idna >= 2.0
+BuildRequires:  python-pyasn1 >= 0.1.8
+BuildRequires:  python-six >= 1.4.1
+BuildRequires:  python-cffi >= 1.4.1
+BuildRequires:  python-enum34
+BuildRequires:  python-ipaddress
 
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-BuildRequires:  python3-cffi >= 0.8
-BuildRequires:  python3-six
-BuildRequires:  python3-cryptography-vectors = %{version}
-BuildRequires:  python3-pyasn1
-BuildRequires:  python3-iso8601
-BuildRequires:  python3-pretend
 BuildRequires:  python3-pytest
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-pretend
+BuildRequires:  python3-iso8601
+BuildRequires:  python3-cryptography-vectors = %{version}
+BuildRequires:  python3-pyasn1-modules >= 0.1.8
+BuildRequires:  python3-hypothesis
+
+BuildRequires:  python3-idna >= 2.0
+BuildRequires:  python3-pyasn1 >= 0.1.8
+BuildRequires:  python3-six >= 1.4.1
+BuildRequires:  python3-cffi >= 1.4.1
+%endif
+
+%description
+cryptography is a package designed to expose cryptographic primitives and
+recipes to Python developers.
+
+%package -n  python2-cryptography
+Group:          Development/Libraries
+Summary:        PyCA's cryptography library
+Obsoletes:      python-cryptography <= %{version}-%{release}
+
+%if 0%{?fedora}
+%{?python_provide:%python_provide python2-cryptography}
+%else
+Provides:       python-cryptography
 %endif
 
 Requires:       openssl
+Requires:       python-idna >= 2.0
+Requires:       python-pyasn1 >= 0.1.8
+Requires:       python-six >= 1.4.1
+Requires:       python-cffi >= 1.4.1
 Requires:       python-enum34
-Requires:       python-cffi >= 0.8
-Requires:       python-six >= 1.6.1
-Requires:       python-pyasn1
+Requires:       python-ipaddress
 
-%description
+%description -n python2-cryptography
 cryptography is a package designed to expose cryptographic primitives and
 recipes to Python developers.
 
@@ -54,11 +81,13 @@ recipes to Python developers.
 %package -n  python3-cryptography
 Group:          Development/Libraries
 Summary:        PyCA's cryptography library
+%{?python_provide:%python_provide python3-cryptography}
 
 Requires:       openssl
-Requires:       python3-cffi >= 0.8
-Requires:       python3-six >= 1.6.1
-Requires:       python3-pyasn1
+Requires:       python3-idna >= 2.0
+Requires:       python3-pyasn1 >= 0.1.8
+Requires:       python3-six >= 1.4.1
+Requires:       python3-cffi >= 1.4.1
 
 %description -n python3-cryptography
 cryptography is a package designed to expose cryptographic primitives and
@@ -66,7 +95,7 @@ recipes to Python developers.
 %endif
 
 %prep
-%setup -q -n cryptography-%{version}
+%autosetup -p1 -n cryptography-%{version}
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -108,7 +137,7 @@ popd
 %endif
 
 
-%files
+%files -n python2-cryptography
 %doc LICENSE LICENSE.APACHE LICENSE.BSD README.rst docs
 %{python_sitearch}/*
 
@@ -121,6 +150,44 @@ popd
 
 
 %changelog
+* Tue May 10 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.3.1-3
+- Remove versioned setuptools dependency
+
+* Tue May 10 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.3.1-2
+- Make it easier to build on EL7
+
+* Tue May 03 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.3.1-1
+- Update to v1.3.1
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.2.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Jan 11 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.2.1-2
+- Move python-cryptograph => python2-cryptography
+
+* Sat Jan 09 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.2.1-1
+- Update to v1.2.1
+
+* Wed Nov 11 2015 Robert Kuska <rkuska@redhat.com> - 1.1-1
+- Update to v1.1
+
+* Wed Nov 04 2015 Robert Kuska <rkuska@redhat.com> - 1.0.2-2
+- Rebuilt for Python3.5 rebuild
+
+* Wed Sep 30 2015 Matěj Cepl <mcepl@redhat.com> - 1.0.2-1
+- New upstream release (fix #1267548)
+
+* Wed Aug 12 2015 Nathaniel McCallum <npmccallum@redhat.com> - 1.0-1
+- New upstream release
+
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.9-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Thu May 14 2015 Nathaniel McCallum <npmccallum@redhat.com> - 0.9-1
+- New upstream release
+- Run tests on RHEL
+- New deps: python-idna, python-ipaddress
+
 * Fri Apr 17 2015 Nathaniel McCallum <npmccallum@redhat.com> - 0.8.2-1
 - New upstream release
 - Add python3-pyasn1 Requires (#1211073)
