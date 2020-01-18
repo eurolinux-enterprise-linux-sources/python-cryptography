@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from cryptography import utils
 from cryptography.x509.base import (
     Certificate, CertificateBuilder, CertificateRevocationList,
     CertificateRevocationListBuilder,
@@ -12,6 +11,7 @@ from cryptography.x509.base import (
     InvalidVersion, RevokedCertificate, RevokedCertificateBuilder,
     Version, load_der_x509_certificate, load_der_x509_crl, load_der_x509_csr,
     load_pem_x509_certificate, load_pem_x509_crl, load_pem_x509_csr,
+    random_serial_number,
 )
 from cryptography.x509.extensions import (
     AccessDescription, AuthorityInformationAccess,
@@ -30,20 +30,15 @@ from cryptography.x509.general_name import (
     RegisteredID, UniformResourceIdentifier, UnsupportedGeneralNameType,
     _GENERAL_NAMES
 )
-from cryptography.x509.name import Name, NameAttribute
+from cryptography.x509.name import (
+    Name, NameAttribute, RelativeDistinguishedName
+)
 from cryptography.x509.oid import (
     AuthorityInformationAccessOID, CRLEntryExtensionOID,
     CertificatePoliciesOID, ExtendedKeyUsageOID, ExtensionOID, NameOID,
     ObjectIdentifier, SignatureAlgorithmOID, _SIG_OIDS_TO_HASH
 )
 
-
-CRLExtensionOID = utils.deprecated(
-    CRLEntryExtensionOID,
-    __name__,
-    "CRLExtensionOID has been renamed to CRLEntryExtensionOID",
-    utils.DeprecatedIn12
-)
 
 OID_AUTHORITY_INFORMATION_ACCESS = ExtensionOID.AUTHORITY_INFORMATION_ACCESS
 OID_AUTHORITY_KEY_IDENTIFIER = ExtensionOID.AUTHORITY_KEY_IDENTIFIER
@@ -121,6 +116,7 @@ __all__ = [
     "load_der_x509_csr",
     "load_pem_x509_crl",
     "load_der_x509_crl",
+    "random_serial_number",
     "InvalidVersion",
     "DuplicateExtension",
     "UnsupportedExtension",
@@ -128,6 +124,7 @@ __all__ = [
     "UnsupportedGeneralNameType",
     "NameAttribute",
     "Name",
+    "RelativeDistinguishedName",
     "ObjectIdentifier",
     "ExtensionType",
     "Extensions",
@@ -174,7 +171,6 @@ __all__ = [
     "OID_CA_ISSUERS",
     "OID_OCSP",
     "_GENERAL_NAMES",
-    "CRLExtensionOID",
     "CertificateIssuer",
     "CRLReason",
     "InvalidityDate",

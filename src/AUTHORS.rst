@@ -27,3 +27,12 @@ PGP key fingerprints are enclosed in parentheses.
 * Jiangge Zhang <tonyseek@gmail.com> (BBEC 782B 015F 71B1 5FF7  EACA 1A8C AA98 255F 5000)
 * Major Hayden <major@mhtx.net> (1BF9 9264 9596 0033 698C  252B 7370 51E0 C101 1FB1)
 * Phoebe Queen <foibey@gmail.com> (10D4 7741 AB65 50F4 B264 3888 DA40 201A 072B C1FA)
+* Google Inc.
+* Amaury Forgeot d'Arc <amauryfa@google.com>
+* Dirkjan Ochtman <dirkjan@ochtman.nl> (25BB BAC1 13C1 BFD5 AA59  4A4C 9F96 B929 3038 0381)
+* Maximilian Hils <max@maximilianhils.com>
+* Simo Sorce <simo@redhat.com>
+* Thomas Sileo <t@a4.io>
+* Fraser Tweedale <ftweedal@redhat.com>
+* Ofek Lev <ofekmeister@gmail.com> (FFB6 B92B 30B1 7848 546E 9912 972F E913 DAD5 A46E)
+* Erik Daguerre <fallenwolf@wolfthefallen.com>

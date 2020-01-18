@@ -6,15 +6,23 @@
 %endif
 
 Name:           python-cryptography
-Version:        1.3.1
-Release:        3%{?dist}
+Version:        1.7.2
+Release:        1%{?dist}
 Summary:        PyCA's cryptography library
 
 Group:          Development/Libraries
 License:        ASL 2.0 or BSD
 URL:            https://cryptography.io/en/latest/
-Source0:        https://pypi.python.org/packages/source/c/cryptography/cryptography-%{version}.tar.gz
-Patch0:         %{name}-1.3.1-setuptools.patch
+Source0:        https://files.pythonhosted.org/packages/source/c/cryptography/cryptography-%{version}.tar.gz
+Patch0:         %{name}-1.7.2-setup.patch
+Patch1:         %{name}-1.7.2-test.patch
+
+# This package needs four brew build overrides for RHEL in prder to provide
+# build and test dependencies:
+#     python-pretend
+#     python-hypothesis
+#     python-iso8601
+#     python-cryptography-vectors
 
 BuildRequires:  openssl-devel
 
@@ -26,6 +34,7 @@ BuildRequires:  python-iso8601
 BuildRequires:  python-cryptography-vectors = %{version}
 BuildRequires:  python-pyasn1-modules >= 0.1.8
 BuildRequires:  python-hypothesis
+BuildRequires:  pytz
 
 BuildRequires:  python-idna >= 2.0
 BuildRequires:  python-pyasn1 >= 0.1.8
@@ -43,6 +52,7 @@ BuildRequires:  python3-iso8601
 BuildRequires:  python3-cryptography-vectors = %{version}
 BuildRequires:  python3-pyasn1-modules >= 0.1.8
 BuildRequires:  python3-hypothesis
+BuildRequires:  python3-pytz
 
 BuildRequires:  python3-idna >= 2.0
 BuildRequires:  python3-pyasn1 >= 0.1.8
@@ -62,7 +72,7 @@ Obsoletes:      python-cryptography <= %{version}-%{release}
 %if 0%{?fedora}
 %{?python_provide:%python_provide python2-cryptography}
 %else
-Provides:       python-cryptography
+Provides:       python-cryptography = %{version}-%{release}
 %endif
 
 Requires:       openssl
@@ -150,6 +160,12 @@ popd
 
 
 %changelog
+* Tue Feb 14 2017 Christian Heimes <cheimes@redhat.com> - 1.7.2-1
+- Update to 1.7.2
+- Disable pytest.deprecated_call() tests
+- Remove versioned pytest
+- Add build requirements pytz
+
 * Tue May 10 2016 Nathaniel McCallum <npmccallum@redhat.com> - 1.3.1-3
 - Remove versioned setuptools dependency
 
